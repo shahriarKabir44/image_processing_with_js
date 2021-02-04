@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>insta</title>
+</head>
+
+<body>
+    <h1>intagrap clone</h1>
+    <input type="file" accept="image/*" id="fileinput" />
+    <div style="float: left;">
+        <label for="red">Red</label>
+        <input type="range" min="-255" max="255" value="0" id="red">
+        <br>
+        <label for="green">Green</label>
+        <input type="range" min="-255" max="255" value="0" id="green">
+
+        <br>
+        <label for="blue">Blue</label>
+        <input type="range" min="-255" max="255" value="0" id="blue">
+        <br>
+        <label for="brightness">Brightness</label>
+        <input type="range" min="-255" max="255" value="0" id="brightness">
+        <br>
+        <label for="contrast">Constrast</label>
+        <input type="range" min="-255" max="255" value="0" id="contrast">
+        <br>
+        <label for="grayscale">Grayscale</label>
+        <input type="checkbox" id="grayscale">
+        <br>
+        <label for="edg">edge</label>
+        <input type="range" name="edg" min="2" max="20" value="2" onchange="findEdge()" id="edg">
+        <br>
+        <label for="blr">blur</label>
+        <input type="range" name="edg" min="2" value="0" max="20" onchange="blurx()" id="blr">
+        <br>
+        <button onclick="reset()">reset</button>
+
+
+    </div>
+    <canvas style="float: right;" id="canvas" width="0" height="0"></canvas>
+    <script src="app.js"></script>
+</body>
+
+</html>
