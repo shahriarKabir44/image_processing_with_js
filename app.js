@@ -171,6 +171,13 @@ function reset() {
         imgData.data[n] = copydat.data[n];
     }
 
+    getel('red').value = "0"
+    getel('green').value = "0"
+    getel('blue').value = "0"
+    getel('brightness').value = "0"
+    getel('contrast').value = "0"
+    getel('edg').value = "0"
+    getel('blr').value = "0"
 
     ctx.putImageData(imgData, 0, 0, 0, 0, imgData.width, imgData.height)
 
@@ -186,14 +193,13 @@ function avgpx(x, y) {
 }
 
 function findEdge() {
-    reset()
     threshold = getel('edg').value * 1
     for (let n = 1; n < imgData.width - 1; n++) {
         for (let k = 1; k < imgData.height - 1; k++) {
             var av1 = avgpx(n, k)
             var av2 = avgpx(n - 1, k)
             var av3 = avgpx(n, k + 1)
-            if (Math.abs(av1 - av2) <= threshold || Math.abs(av1 - av3) <= threshold) {
+            if (Math.abs(av1 - av2) >= threshold || Math.abs(av1 - av3) >= threshold) {
                 imgData.data[getIndex(n, k)] = 255
                 imgData.data[getIndex(n, k) + 1] = 255
                 imgData.data[getIndex(n, k) + 2] = 255
@@ -215,27 +221,22 @@ function blurReg(x, y, kernel) {
     var tot = 0
     var tot1 = 0
     var tot2 = 0
-    for (let n = x; n < Math.min(imgData.width, x + kernel); n++) {
-        for (let k = y; k < Math.min(imgData.height, y + kernel); k++) {
-            tot += imgData.data[getIndex(n, k)]
-            tot1 += imgData.data[getIndex(n, k) + 1]
-            tot2 += imgData.data[getIndex(n, k) + 2]
+    for (let n = x - (Math.floor(kernel / 2)); n <= x + Math.floor(kernel / 2); n++) {
+        for (let k = y - (Math.floor(kernel / 2)); k <= y + Math.floor(kernel / 2); k++) {
+            tot += (imgData.data[getIndex(n, k)] || imgData.data[getIndex(x, y)])
+            tot1 += (imgData.data[getIndex(n, k) + 1] || imgData.data[getIndex(x, y) + 1])
+            tot2 += (imgData.data[getIndex(n, k) + 2] || imgData.data[getIndex(x, y) + 2])
         }
     }
-    tot /= (kernel * kernel)
-    tot1 /= (kernel * kernel)
-    tot2 /= (kernel * kernel)
-    for (let n = x; n < Math.min(imgData.width, x + kernel); n++) {
-        for (let k = y; k < Math.min(imgData.height, y + kernel); k++) {
-            imgData.data[getIndex(n, k)] = Math.floor(tot)
-            imgData.data[getIndex(n, k) + 1] = Math.floor(tot1)
-            imgData.data[getIndex(n, k) + 2] = Math.floor(tot2)
-        }
-    }
+    tot = Math.floor(tot / (kernel * kernel));
+    tot1 = Math.floor(tot1 / (kernel * kernel));
+    tot2 = Math.floor(tot2 / (kernel * kernel));
+    imgData.data[getIndex(x, y)] = tot
+    imgData.data[getIndex(x, y) + 1] = tot1
+    imgData.data[getIndex(x, y) + 2] = tot2
 }
 
 function blurx() {
-    reset()
     kernel = getel('blr').value * 1
     kernel += (1 & !(kernel & 1))
     for (let n = 0; n < imgData.width; n++) {
